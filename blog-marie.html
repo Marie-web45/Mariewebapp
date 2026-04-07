@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marie — Cybersec & Tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #181824;
+    --accent: #7c6af7;
+    --accent2: #e84393;
+    --accent3: #00d9b1;
+    --text: #e8e6f0;
+    --muted: #6b6880;
+    --border: rgba(124,106,247,0.15);
+    --border2: rgba(124,106,247,0.08);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,106,247,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,106,247,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb-1 { width: 400px; height: 400px; background: rgba(124,106,247,0.12); top: -100px; right: -100px; }
+  .orb-2 { width: 300px; height: 300px; background: rgba(232,67,147,0.08); bottom: 200px; left: -80px; }
+  .orb-3 { width: 250px; height: 250px; background: rgba(0,217,177,0.07); top: 50%; right: 10%; }
+
+  /* Layout */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    border-bottom: 1px solid var(--border2);
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+  }
+  .logo span { color: var(--accent2); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 64px;
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    width: 100%;
+  }
+  .hero-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-label::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    line-height: 1.05;
+    font-weight: 400;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+    max-width: 420px;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 14px 28px;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent2);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .hero-cta:hover::before { transform: translateX(0); }
+  .hero-cta span { position: relative; z-index: 1; }
+
+  /* Terminal card */
+  .terminal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border2);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #e84393; }
+  .dot-y { background: #f5c518; }
+  .dot-g { background: #00d9b1; }
+  .terminal-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: auto;
+    letter-spacing: 0.05em;
+  }
+  .terminal-body {
+    padding: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    line-height: 2;
+  }
+  .t-prompt { color: var(--accent3); }
+  .t-cmd { color: var(--text); }
+  .t-out { color: var(--muted); display: block; margin-left: 0; }
+  .t-out.highlight { color: var(--accent2); }
+  .t-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--accent);
+    animation: blink 1.2s step-end infinite;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* SECTION base */
+  section { padding: 6rem 0; }
+  .section-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-tag::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  /* TOPICS / TAGS */
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .topic-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 1.5rem;
+    border-radius: 4px;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .topic-card:hover { border-color: rgba(124,106,247,0.4); transform: translateY(-2px); }
+  .topic-card:hover::before { transform: scaleX(1); }
+  .topic-icon {
+    font-size: 22px;
+    margin-bottom: 1rem;
+  }
+  .topic-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .topic-desc { font-size: 13px; color: var(--muted); }
+
+  /* ARTICLES */
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  .article-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s;
+    display: flex;
+    flex-direction: column;
+  }
+  .article-card:hover { border-color: var(--border); transform: translateY(-3px); }
+  .article-thumb {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .thumb-cyber { background: linear-gradient(135deg, #0d1117 0%, #1a0a2e 100%); }
+  .thumb-ai    { background: linear-gradient(135deg, #060e17 0%, #0a1f1a 100%); }
+  .thumb-chain { background: linear-gradient(135deg, #17080d 0%, #1f0a14 100%); }
+  .article-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 1rem 1.25rem 0;
+  }
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    border: 1px solid;
+  }
+  .tag-cyber { color: var(--accent); border-color: rgba(124,106,247,0.3); }
+  .tag-ai    { color: var(--accent3); border-color: rgba(0,217,177,0.3); }
+  .tag-chain { color: var(--accent2); border-color: rgba(232,67,147,0.3); }
+  .article-date { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted); margin-left: auto; }
+  .article-body { padding: 1rem 1.25rem 1.5rem; flex: 1; display: flex; flex-direction: column; }
+  .article-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+  .article-excerpt { font-size: 13.5px; color: var(--muted); line-height: 1.7; flex: 1; }
+  .article-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 1.25rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+    transition: gap 0.2s;
+  }
+  .article-link:hover { gap: 10px; }
+  .article-link::after { content: '→'; }
+
+  /* FEATURED */
+  .featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .featured-visual {
+    height: 100%;
+    min-height: 300px;
+    background: linear-gradient(145deg, #0d0d20 0%, #1a0a2e 50%, #0d1a2e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    position: relative;
+  }
+  .featured-visual::after {
+    content: 'FEATURED';
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    border: 1px solid rgba(124,106,247,0.3);
+    padding: 4px 10px;
+  }
+  .featured-content { padding: 2.5rem; display: flex; flex-direction: column; justify-content: center; }
+  .featured-content .article-title { font-size: 1.8rem; margin-bottom: 1rem; }
+  .featured-content .article-excerpt { font-size: 14.5px; }
+
+  /* ABOUT */
+  .about-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+  .about-visual {
+    aspect-ratio: 1;
+    max-width: 400px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .about-avatar-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 60%, rgba(124,106,247,0.15) 0%, transparent 70%);
+  }
+  .about-initials {
+    font-family: 'DM Serif Display', serif;
+    font-size: 120px;
+    color: rgba(124,106,247,0.15);
+    user-select: none;
+    position: relative;
+    z-index: 1;
+  }
+  .about-badge {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: rgba(10,10,15,0.9);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent3); flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)} }
+  .badge-text { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); }
+  .badge-text strong { display: block; color: var(--text); font-size: 13px; }
+
+  .about-text .section-title { margin-bottom: 1.5rem; }
+  .about-text p { color: var(--muted); font-size: 15px; margin-bottom: 1.25rem; line-height: 1.8; }
+  .skills-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
+  .chip {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* NEWSLETTER */
+  .newsletter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .newsletter::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+  }
+  .newsletter h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+  }
+  .newsletter p { color: var(--muted); font-size: 15px; margin-bottom: 2rem; }
+  .newsletter-form { display: flex; gap: 12px; max-width: 480px; margin: 0 auto; }
+  .newsletter-form input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 12px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .newsletter-form input::placeholder { color: var(--muted); }
+  .newsletter-form input:focus { border-color: var(--accent); }
+  .newsletter-form button {
+    background: var(--accent);
+    border: none;
+    border-radius: 2px;
+    padding: 12px 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bg);
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .newsletter-form button:hover { background: var(--accent2); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border2);
+    padding: 2.5rem 0;
+  }
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  .footer-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .featured { grid-template-columns: 1fr; }
+    .featured-visual { min-height: 200px; }
+    .about-inner { grid-template-columns: 1fr; }
+    .about-visual { max-width: 100%; }
+    .newsletter-form { flex-direction: column; }
+    .footer-inner { flex-direction: column; gap: 1.5rem; }
+    .nav-links { display: none; }
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.7s ease forwards; }
+  .fade-up-2 { animation: fadeUp 0.7s 0.15s ease both; }
+  .fade-up-3 { animation: fadeUp 0.7s 0.3s ease both; }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="#">marie<span>.sec</span></a>
+    <ul class="nav-links">
+      <li><a href="#articles">Articles</a></li>
+      <li><a href="#topics">Topics</a></li>
+      <li><a href="#about">À propos</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="fade-up">
+        <p class="hero-label">Cybersecurity &amp; Tech Blog</p>
+        <h1>Explorer les <em>frontières</em> du numérique</h1>
+        <p class="hero-desc">Étudiante en cybersécurité à Yaoundé. J'écris sur la sécurité offensive, l'IA, la cryptographie et les systèmes du futur. Pas de bullshit — juste de la technique.</p>
+        <a href="#articles" class="hero-cta"><span>Lire les articles</span></a>
+      </div>
+      <div class="fade-up-2">
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+            <span class="terminal-title">marie@kali ~ $</span>
+          </div>
+          <div class="terminal-body">
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">whoami</span></div>
+            <span class="t-out highlight">marie_ngog — cybersec student & builder</span>
+            <br>
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">cat interests.txt</span></div>
+            <span class="t-out">→ Red Team / Pentest</span>
+            <span class="t-out">→ AI Security &amp; LLM attacks</span>
+            <span class="t-out">→ Cryptographie post-quantique</span>
+            <span class="t-out">→ Blockchain forensics</span>
+            <span class="t-out">→ DevSecOps &amp; Cloud</span>
+            <br>
+            <div><span class="t-prompt">❯ </span><span class="t-cmd">status</span></div>
+            <span class="t-out highlight">⚡ Master 1 — Keyce IA &amp; Cybersec — Yaoundé</span>
+            <span class="t-out">🎯 Target: employed by Oct 2027</span>
+            <br>
+            <div><span class="t-prompt">❯ </span><span class="t-cmd"><span class="t-cursor"></span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOPICS -->
+<section id="topics">
+  <div class="container">
+    <p class="section-tag">Sujets</p>
+    <h2 class="section-title">Mes <em>domaines</em></h2>
+    <div class="topics-grid">
+      <div class="topic-card">
+        <div class="topic-icon">🛡️</div>
+        <div class="topic-name">Cybersécurité</div>
+        <div class="topic-desc">Red team, pentest, détection d'intrusions, CTF writeups et sécurité offensive.</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">🤖</div>
+        <div class="topic-name">IA & Machine Learning</div>
+        <div class="topic-desc">Attaques adversariales, LLM red teaming, federated learning et détection par IA.</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">🔐</div>
+        <div class="topic-name">Cryptographie</div>
+        <div class="topic-desc">Post-quantum, zero-knowledge proofs, protocoles modernes et implémentations.</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">⛓️</div>
+        <div class="topic-name">Blockchain</div>
+        <div class="topic-desc">Forensics on-chain, smart contract audits, DeFi security et Web3.</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">☁️</div>
+        <div class="topic-name">Cloud & DevSecOps</div>
+        <div class="topic-desc">Infrastructure sécurisée, CI/CD, Kubernetes hardening et zero-trust.</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">🔬</div>
+        <div class="topic-name">Research & Labs</div>
+        <div class="topic-desc">Expériences, datasets, reproductions de papers et projets académiques.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARTICLES -->
+<section id="articles">
+  <div class="container">
+    <p class="section-tag">Articles</p>
+    <h2 class="section-title">Dernières <em>publications</em></h2>
+    <div class="articles-grid">
+
+      <!-- Featured -->
+      <div class="featured">
+        <div class="featured-visual">⚔️</div>
+        <div class="featured-content">
+          <div class="article-meta" style="padding: 0 0 1rem;">
+            <span class="tag tag-cyber">Cybersécurité</span>
+            <span class="article-date">15 mars 2025</span>
+          </div>
+          <h3 class="article-title">FGSM vs PGD : Attaques adversariales sur un système de détection d'intrusions</h3>
+          <p class="article-excerpt">Comment j'ai implementé et comparé deux attaques adversariales majeures sur un IDS entraîné avec NSL-KDD — et pourquoi l'adversarial training ne suffit pas toujours.</p>
+          <a href="#" class="article-link">Lire l'article</a>
+        </div>
+      </div>
+
+      <!-- Card 1 -->
+      <div class="article-card">
+        <div class="article-thumb thumb-ai">🧠</div>
+        <div class="article-meta">
+          <span class="tag tag-ai">IA</span>
+          <span class="article-date">2 avr 2025</span>
+        </div>
+        <div class="article-body">
+          <h3 class="article-title">LLM Red Teaming : Jailbreaks et injections de prompts</h3>
+          <p class="article-excerpt">Tour d'horizon des techniques d'attaque sur les grands modèles de langage — des injections classiques aux jailbreaks multimodaux.</p>
+          <a href="#" class="article-link">Lire l'article</a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="article-card">
+        <div class="article-thumb thumb-chain">⛓️</div>
+        <div class="article-meta">
+          <span class="tag tag-chain">Blockchain</span>
+          <span class="article-date">18 fév 2025</span>
+        </div>
+        <div class="article-body">
+          <h3 class="article-title">Forensics on-chain : Tracer des fonds sur Ethereum</h3>
+          <p class="article-excerpt">Méthodologie complète pour analyser des transactions suspectes, identifier des mixers et retrouver des flux financiers illicites sur la blockchain.</p>
+          <a href="#" class="article-link">Lire l'article</a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="article-card">
+        <div class="article-thumb thumb-cyber">🔒</div>
+        <div class="article-meta">
+          <span class="tag tag-cyber">Cryptographie</span>
+          <span class="article-date">5 jan 2025</span>
+        </div>
+        <div class="article-body">
+          <h3 class="article-title">Post-Quantum : Kyber et Dilithium expliqués simplement</h3>
+          <p class="article-excerpt">Les algorithmes retenus par le NIST face aux ordinateurs quantiques — comprendre les fondements mathématiques sans se noyer dans les lattices.</p>
+          <a href="#" class="article-link">Lire l'article</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-inner">
+      <div class="about-visual">
+        <div class="about-avatar-bg"></div>
+        <div class="about-initials">M</div>
+        <div class="about-badge">
+          <div class="badge-dot"></div>
+          <div class="badge-text">
+            <strong>Marie Ngog</strong>
+            M1 Cybersécurité — Keyce IA, Yaoundé
+          </div>
+        </div>
+      </div>
+      <div class="about-text">
+        <p class="section-tag">À propos</p>
+        <h2 class="section-title">Qui suis-<em>je</em> ?</h2>
+        <p>19 ans, étudiante en Master 1 Cybersécurité à Keyce Informatique & IA à Yaoundé. Passionnée par tout ce qui touche à la sécurité des systèmes, l'intelligence artificielle et la construction de technologies nouvelles.</p>
+        <p>Ce blog est mon lab public — j'y documente mes recherches, mes projets académiques et mes explorations techniques. L'objectif : devenir une des technologistes de référence d'Afrique d'ici 2027.</p>
+        <p>En dehors du code, je construis un système d'automatisation IA pour mon business de résine, et j'explore Make.com + Claude API pour industrialiser mes workflows.</p>
+        <div class="skills-chips">
+          <span class="chip">Python</span>
+          <span class="chip">PyTorch</span>
+          <span class="chip">Selenium</span>
+          <span class="chip">Linux</span>
+          <span class="chip">Kali</span>
+          <span class="chip">Wireshark</span>
+          <span class="chip">Solidity</span>
+          <span class="chip">Docker</span>
+          <span class="chip">Make.com</span>
+          <span class="chip">Claude API</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section id="contact">
+  <div class="container">
+    <div class="newsletter">
+      <h2>Rester dans la boucle</h2>
+      <p>Nouveaux articles, projets et ressources — directement dans ta boîte mail. Pas de spam.</p>
+      <div class="newsletter-form">
+        <input type="email" placeholder="ton@email.com">
+        <button>S'abonner</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy">© 2025 Marie Ngog — Yaoundé, CM</span>
+    <div class="footer-links">
+      <a href="#">GitHub</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">TikTok</a>
+      <a href="#">WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
