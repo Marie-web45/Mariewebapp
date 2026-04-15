@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKERHUB_USERNAME = 'TON_USERNAME'          // Remplace par ton pseudo DockerHub
+        IMAGE_NAME         = 'marie-flask-app'
+        IMAGE_TAG          = 'latest'
+        GITHUB_REPO        = 'https://github.com/Marie-web45/Mariewebapp.git'
+        DOCKERHUB_CREDS    = 'dockerhub-credentials'  // ID des credentials Jenkins
+    }
+
+    stages {
+
+        stage('Clonage') {
+            steps {
+                echo '📥 Clonage du dépôt GitHub...'
+                git branch: 'main', url: "${GITHUB_REPO}"
+                echo '✅ Clonage terminé.'
+            }
+        }
+
+        stage('Image') {
+            steps {
+                echo '🐳 Construction de l\'image Docker...'
+                sh 'docker build -t ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG} .'
+                echo '✅ Image construite avec succès.'
+            }
+        }
+
+        stage('Publication') {
+            steps {
+                echo '🚀 Publication de l\'image sur DockerHub...'
+                withCredentials([usernamePassword(
+                    credentialsId: "${DOCKERHUB_CREDS}",
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                    sh 'docker push ${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}'
+                }
+                echo '✅ Image publiée sur DockerHub.'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '🎉 Pipeline exécuté avec succès !'
+        }
+        failure {
+            echo '❌ Erreur dans le pipeline. Vérifier les logs.'
+        }
+        always {
+            sh 'docker logout'
+        }
+    }
+}

@@ -1,0 +1,60 @@
+# ============================================================
+# HISTORIQUE DES COMMANDES - TP1 Docker
+# Marie | Master 1 Cybersécurité | Keyce Informatique & IA
+# ============================================================
+
+# -------------------------------------------------------
+# 1. Cloner le dépôt GitHub
+# -------------------------------------------------------
+git clone https://github.com/Marie-web45/Mariewebapp.git
+cd Mariewebapp
+
+# -------------------------------------------------------
+# 2. Vérifier la structure des fichiers
+# -------------------------------------------------------
+ls -la
+# Attendu : Dockerfile  app.py  requirements.txt
+
+# -------------------------------------------------------
+# 3. Construire l'image Docker
+# -------------------------------------------------------
+docker build -t marie-flask-app .
+
+# -------------------------------------------------------
+# 4. Vérifier que l'image a bien été créée
+# -------------------------------------------------------
+docker images | grep marie-flask-app
+
+# -------------------------------------------------------
+# 5. Lancer le conteneur
+# -------------------------------------------------------
+docker run -d -p 5000:5000 --name marie-flask-container marie-flask-app
+
+# -------------------------------------------------------
+# 6. Vérifier que le conteneur tourne
+# -------------------------------------------------------
+docker ps
+
+# -------------------------------------------------------
+# 7. Tester l'application (dans le navigateur ou curl)
+# -------------------------------------------------------
+# Ouvrir : http://localhost:5000
+curl http://localhost:5000
+
+# -------------------------------------------------------
+# 8. Voir les logs du conteneur
+# -------------------------------------------------------
+docker logs marie-flask-container
+
+# -------------------------------------------------------
+# 9. Push sur DockerHub (remplacer TON_USERNAME par ton pseudo DockerHub)
+# -------------------------------------------------------
+docker login
+docker tag marie-flask-app TON_USERNAME/marie-flask-app:latest
+docker push TON_USERNAME/marie-flask-app:latest
+
+# -------------------------------------------------------
+# 10. Arrêter et supprimer le conteneur (si besoin)
+# -------------------------------------------------------
+docker stop marie-flask-container
+docker rm marie-flask-container

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  pritunl:
+    image: jippi/pritunl
+    container_name: pritunl-server
+    restart: unless-stopped
+    privileged: true
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+    ports:
+      - "80:80"
+      - "443:443"
+      - "1194:1194/udp"
+    environment:
+      - PRITUNL_MONGODB_URI=mongodb://mongodb:27017/pritunl
+    volumes:
+      - ./volumes/pritunl:/var/lib/pritunl
+    depends_on:
+      - mongodb
+    networks:
+      - vpn-network
+
+  mongodb:
+    image: mongo:4.4
+    container_name: pritunl-mongodb
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_DATABASE=pritunl
+    volumes:
+      - ./volumes/mongodb:/data/db
+    networks:
+      - vpn-network
+
+networks:
+  vpn-network:
+    driver: bridge
+
+volumes:
+  pritunl_data:
+  mongodb_data:
